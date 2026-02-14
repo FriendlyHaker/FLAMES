@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Relationship Tester 💕</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+    --bg1:#7f7fd5;
+    --bg2:#86a8e7;
+    --bg3:#91eae4;
+    --card:rgba(255,255,255,0.18);
+    --text:#fff;
+}
+
+body.dark{
+    --bg1:#0f2027;
+    --bg2:#203a43;
+    --bg3:#2c5364;
+    --card:rgba(0,0,0,0.45);
+    --text:#f1f1f1;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'Poppins',sans-serif;
+    background:radial-gradient(circle at top,var(--bg1),var(--bg2),var(--bg3));
+    color:var(--text);
+    transition:0.4s;
+}
+
+/* Card */
+.card{
+    width:92%;
+    max-width:420px;
+    padding:30px;
+    border-radius:25px;
+    background:var(--card);
+    backdrop-filter:blur(16px);
+    box-shadow:0 25px 60px rgba(0,0,0,0.4);
+    text-align:center;
+    animation:pop 0.8s ease;
+}
+
+.toggle{
+    position:absolute;
+    top:20px;
+    right:20px;
+    font-size:1.4rem;
+    cursor:pointer;
+}
+
+h1{margin-bottom:8px}
+.note{font-size:.85rem;opacity:.8;margin-bottom:25px}
+
+/* Inputs */
+.input-box{
+    position:relative;
+    margin:18px 0;
+}
+
+.input-box input{
+    width:80%;
+    padding:16px 45px 16px 15px;
+    border-radius:14px;
+    border:none;
+    outline:none;
+    font-size:1rem;
+    background:rgba(255,255,255,0.25);
+    color:var(--text);
+    box-shadow:inset 2px 2px 6px rgba(0,0,0,.25);
+}
+
+.input-box span{
+    position:absolute;
+    right:14px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:1.3rem;
+}
+
+/* Button */
+button{
+    margin-top:22px;
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:18px;
+    font-size:1.05rem;
+    font-weight:600;
+    color:white;
+    cursor:pointer;
+    background:linear-gradient(135deg,#ff4ecd,#ff9f4a);
+    box-shadow:0 12px 30px rgba(0,0,0,.45);
+    transition:.3s;
+}
+
+button:hover{
+    transform:translateY(-3px);
+}
+
+/* Result */
+.result{
+    margin-top:28px;
+    min-height:80px;
+    font-size:1.3rem;
+}
+
+.emoji{
+    font-size:3rem;
+    display:block;
+    animation:bounce 1s infinite alternate;
+}
+
+/* Confetti / Hearts / Fire */
+.effect{
+    position:fixed;
+    font-size:2rem;
+    animation:floatUp 2s linear forwards;
+}
+
+@keyframes floatUp{
+    from{transform:translateY(0);opacity:1}
+    to{transform:translateY(-150px);opacity:0}
+}
+
+@keyframes pop{
+    from{transform:scale(.7);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+
+@keyframes bounce{
+    from{transform:translateY(0)}
+    to{transform:translateY(-10px)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="toggle" onclick="toggleMode()">🌙</div>
+
+<div class="card">
+    <h1>Relationship Tester 💖</h1>
+    <p class="note">NOTE: this is only for time pass!</p>
+
+    <div class="input-box">
+        <input id="name1" placeholder="Enter first name">
+        <span>👤</span>
+    </div>
+
+    <div class="input-box">
+        <input id="name2" placeholder="Enter second name">
+        <span>👤</span>
+    </div>
+
+    <button onclick="calculate()">💫 Check Relationship</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<!-- Sounds -->
+<audio id="friend" src="https://assets.mixkit.co/sfx/preview/mixkit-game-success-alert-2039.mp3"></audio>
+<audio id="love" src="https://assets.mixkit.co/sfx/preview/mixkit-melodic-bonus-collect-1938.mp3"></audio>
+<audio id="enemy" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+
+<script>
+function toggleMode(){
+    document.body.classList.toggle("dark");
+}
+
+/* EFFECT GENERATOR */
+function spawn(symbol,count){
+    for(let i=0;i<count;i++){
+        let e=document.createElement("div");
+        e.className="effect";
+        e.innerText=symbol;
+        e.style.left=Math.random()*100+"vw";
+        e.style.bottom="20px";
+        document.body.appendChild(e);
+        setTimeout(()=>e.remove(),2000);
+    }
+}
+
+/* === ORIGINAL LOGIC (NOT CHANGED) === */
+function calculate(){
+    let str1=name1.value;
+    let str2=name2.value;
+    if(!str1||!str2){result.innerHTML="⚠️ Enter both names";return;}
+
+    let n1=str1.toLowerCase(), n2=str2.toLowerCase();
+
+    function countAll(n){
+        let o={};
+        for(let i=97;i<=122;i++)
+            o[String.fromCharCode(i)]=n.split(String.fromCharCode(i)).length-1;
+        return o;
+    }
+
+    let c1=countAll(n1), c2=countAll(n2), lenth=0;
+    for(let i=97;i<=122;i++){
+        let ch=String.fromCharCode(i);
+        lenth+=Math.abs(c1[ch]-c2[ch]);
+    }
+
+    let t="",e="";
+    if(lenth==3||lenth==5||lenth==14||lenth==16||lenth==18){
+        t="They Are Friends!"; e="🤝😄";
+        friend.play(); spawn("🎉",15);
+    }
+    else if(lenth==10||lenth==19){
+        t="They Are Lovers!"; e="❤️😍";
+        love.play(); spawn("❤️",20);
+    }
+    else if(lenth==8||lenth==12||lenth==13||lenth==17){
+        t="Affection Between Them!"; e="🥰✨";
+        spawn("✨",15);
+    }
+    else if(lenth==6||lenth==11||lenth==15){
+        t="They Will do Marriage!"; e="💍👰🤵";
+        spawn("💍",20);
+    }
+    else if(lenth==2||lenth==4||lenth==7||lenth==9||lenth==20){
+        t="They Are Enemies!"; e="😡⚔️";
+        enemy.play(); spawn("🔥",20);
+    }
+    else if(lenth==1){
+        t="They Are Siblings!"; e="👫👬";
+        spawn("🎈",15);
+    }
+    else{
+        t="Check the names!"; e="❓🤔";
+    }
+
+    result.innerHTML=`<span class="emoji">${e}</span>${t}`;
+}
+</script>
+
+</body>
+</html>
