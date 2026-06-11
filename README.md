@@ -1,3 +1,3 @@
 # flames-web-tool
 webpage for the flames logic
-link:https://dynamic-lollipop-709110.netlify.app/
+link:https://amazing-empanada-20d783.netlify.app/
